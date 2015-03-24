@@ -17,23 +17,23 @@ define(['settings'], function(Settings) {
       */
 
       // InfluxDB example setup (the InfluxDB databases specified need to exist)
-      
+
       datasources: {
         influxdb: {
           type: 'influxdb',
-          url: "http://yourip:8086/db/exampledb",
+          url: window.location.origin + '/db/exampledb',
           username: 'root',
           password: 'root',
         },
         grafana: {
           type: 'influxdb',
-          url: "http://yourip:8086/db/grafana",
+          url: window.location.origin + '/db/grafana',
           username: 'root',
           password: 'root',
           grafanaDB: true
         },
       },
-      
+
       /* Global configuration options
       * ========================================================
       */

@@ -26,22 +26,27 @@ RUN \
 
 WORKDIR /opt
 RUN \
-  grafana_url=$(curl http://grafanarel.s3.amazonaws.com/latest.json | python -c 'import sys, json; print json.load(sys.stdin)["url"]') && \
+  grafana_url=$(curl -s http://grafanarel.s3.amazonaws.com/latest.json | python -c 'import sys, json; print json.load(sys.stdin)["url"]') && \
   curl -s -o grafana.tar.gz $grafana_url && \
   curl -s -o influxdb_latest_amd64.deb http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb && \
   mkdir grafana && \
   tar -xzf grafana.tar.gz --directory grafana --strip-components=1 && \
   dpkg -i influxdb_latest_amd64.deb && \
+  mkdir influxdb/ssl && \
+  openssl req -new -x509 -newkey rsa:2048 -days 1825 -nodes -out influxdb/ssl/influxdb.pem -keyout influxdb/ssl/influxdb.key \
+    -subj "/C=DE/ST=BE/L=Berlin/O=CompanyName/CN=grafana.companyname.com" && \
   echo "influxdb soft nofile unlimited" >> /etc/security/limits.conf && \
   echo "influxdb hard nofile unlimited" >> /etc/security/limits.conf
 
 ADD config.js /opt/grafana/config.js
-ADD nginx.conf /etc/nginx/nginx.conf
+ADD grafana.conf /etc/nginx/sites-available/grafana.conf
+RUN ln -s /etc/nginx/sites-available/grafana.conf /etc/nginx/sites-enabled/grafana.conf
+RUN rm /etc/nginx/sites-enabled/default
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 ADD config.toml /opt/influxdb/current/config.toml
 
 VOLUME ["/opt/influxdb/shared/data"]
 
-EXPOSE 80 8083 8086 2003
+EXPOSE 443 8083 8086 2003
 
 CMD ["supervisord", "-n"]
