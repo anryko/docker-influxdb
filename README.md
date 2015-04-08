@@ -3,6 +3,7 @@
 * [Introduction](#introduction)
 * [What is InfluxDB](#what-is-influxdb)
 * [What is Grafana](#what-is-grafana)
+* [Installing Docker](#installing-docker)
 * [The Dockerfile](#the-dockerfile)
 * [Application Configuration Files](#application-configuration-files)
 * [External Volumes](#external-volumes)
@@ -23,6 +24,12 @@ InfluxDB is a time-series database that has been built to work best with metrics
 ## What is Grafana?
 
 Grafana is a metrics dashboard which plugs into solutions such as Graphite, InfluxDB, and OpenTSDB. You would use Grafana to visualize the various metrics data you are pushing into InfluxDB. In our case the type of metrics we're preparing for are system metrics we hope to gather using [collectd](http://www.collectd.org/).
+
+## Installing Docker
+
+First you need to [install Docker on your OS](https://docs.docker.com/installation/#installation) and pull the Ubuntu image:
+
+    docker pull ubuntu
 
 ## The Dockerfile
 
@@ -255,7 +262,7 @@ Before Grafana can pull data out of InfluxDB you will need to first create the d
 
 You will need to test your InfluxDB installation by pre-populating some dummy data. Use the following command to push some data points into your *exampledb* database. Vary the values so you can create some nice graphs with peaks and troughs. You should be able to run these from the server where the container is running or remotely if you're using a public IP.
 
-    curl -X POST -d '[{"name":"foo","columns":["val"],"points":[[33]]}]' 'https://yourpublicip/db/exampledb/series?u=root&p=root'
+    curl -k -X POST -d '[{"name":"foo","columns":["val"],"points":[[33]]}]' 'https://yourpublicip/db/exampledb/series?u=root&p=root'
 
 This information is populating into our *exampledb* database which is the same one we defined in our Grafana *config.js* file. You can now define your Grafana queries and dashboard settings.
 
