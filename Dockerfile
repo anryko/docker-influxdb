@@ -26,8 +26,7 @@ RUN \
 
 WORKDIR /opt
 RUN \
-  grafana_url=$(curl -s http://grafanarel.s3.amazonaws.com/latest.json | python -c 'import sys, json; print json.load(sys.stdin)["url"]') && \
-  curl -s -o grafana.tar.gz $grafana_url && \
+  curl -s -o grafana.tar.gz https://grafanarel.s3.amazonaws.com/builds/grafana-2.0.2.linux-x64.tar.gz && \
   curl -s -o influxdb_latest_amd64.deb http://s3.amazonaws.com/influxdb/influxdb_latest_amd64.deb && \
   mkdir grafana && \
   tar -xzf grafana.tar.gz --directory grafana --strip-components=1 && \
@@ -38,7 +37,6 @@ RUN \
   echo "influxdb soft nofile unlimited" >> /etc/security/limits.conf && \
   echo "influxdb hard nofile unlimited" >> /etc/security/limits.conf
 
-ADD config.js /opt/grafana/config.js
 ADD grafana.conf /etc/nginx/sites-available/grafana.conf
 RUN ln -s /etc/nginx/sites-available/grafana.conf /etc/nginx/sites-enabled/grafana.conf
 RUN rm /etc/nginx/sites-enabled/default

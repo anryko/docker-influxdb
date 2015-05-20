@@ -13,11 +13,11 @@ port     = 8086
 read-timeout = "5s"
 
 [input_plugins]
-  [input_plugins.graphite]
+  [input_plugins.collectd]
   enabled = true
   port = 2003
-  udp_enabled = true
-  database = "exampledb"
+  database = "collectd"
+  typesdb = "/opt/influxdb/shared/data/types.db"
 
 [raft]
 port = 8090
